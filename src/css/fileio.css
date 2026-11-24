@@ -1,0 +1,74 @@
+/* Tactile — fileio.css: file toolbar, save status, source dialogs and the drop overlay. */
+
+/* ---------------- toolbar ---------------- */
+.fio-bar { gap: 2px; }
+.fio-split { display: inline-flex; align-items: center; gap: 1px; margin-left: 6px; flex: none; }
+.fio-split > .btn.fio-export { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.fio-split > .btn.fio-export-more { width: 20px; padding: 0; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+@media (max-width: 900px) {
+  .btn.fio-btn { padding: 0 7px; }
+  .fio-split { margin-left: 2px; }
+  .fio-split > .btn.fio-export { padding: 0 6px; }
+}
+
+/* ---------------- save status (#status-save) ---------------- */
+.fio-status { display: inline-flex; align-items: center; gap: 6px; }
+.fio-status-main { color: var(--text-2); }
+.fio-status-sub { color: var(--text-3); }
+.fio-status-sub::before { content: "·"; margin-right: 6px; }
+.fio-status-bad { color: var(--danger); }
+.fio-dot { width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--warn); }
+.fio-dot.ok { background: var(--ok); }
+
+/* ---------------- paste / copy dialogs ---------------- */
+.fio-dialog { min-width: 0; }
+.textarea.fio-code {
+  min-height: 220px; max-height: 55vh;
+  white-space: pre; overflow: auto; overflow-wrap: normal;
+  tab-size: 2;
+}
+.fio-error { color: var(--danger); font-size: 12px; }
+
+/* ---------------- drop overlay ---------------- */
+.fio-drop {
+  position: fixed; inset: 8px; z-index: 1150;
+  display: grid; place-items: center;
+  border: 2px dashed var(--accent); border-radius: 14px;
+  background: var(--accent-soft);
+  pointer-events: none;
+  animation: he-fade .12s ease-out;
+}
+.fio-drop-msg {
+  display: flex; align-items: center; gap: 10px;
+  max-width: calc(100% - 32px);
+  padding: 14px 20px; border-radius: 12px;
+  background: var(--panel); color: var(--accent);
+  border: 1px solid var(--accent-line);
+  box-shadow: var(--shadow-lg);
+  font-size: 15px; font-weight: 600; text-align: center;
+}
+@media (max-width: 520px) {
+  .fio-drop-msg { padding: 12px 14px; font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fio-drop { animation: none; }
+}
+
+/* ---------------- off-screen copies for PNG and print ---------------- */
+/* Laid out at a real size (the picture and the deck check measure it) but never seen or reached. */
+/* WebKit draws a frame's own scrollbar by the rules that match the <iframe> in this page: base.css gives every
+   scrollbar 10px, and a rule inside the frame cannot take it back. The copy is as wide as the canvas's page. */
+.fio-copy-frame::-webkit-scrollbar { display: none; }
+.fio-copy-frame {
+  position: fixed; left: 0; top: 0; z-index: -1;
+  border: 0; visibility: hidden; pointer-events: none;
+}
+
+/* ---------------- embedding sibling files ---------------- */
+.fio-bundle p { margin: 0; }
+.fio-bundle-list {
+  margin: 0; padding: 8px 10px 8px 26px; max-height: 32vh; overflow: auto;
+  border: 1px solid var(--line); border-radius: 8px;
+  font-size: 12px; color: var(--text-2); overflow-wrap: anywhere;
+}
+.fio-bundle-list li + li { margin-top: 4px; }

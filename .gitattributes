@@ -1,0 +1,8 @@
+# Windows checkouts keep LF: the tests compare fixture files byte for byte, and dist/ must match what CI builds.
+* text=auto eol=lf
+*.xlsx binary
+*.tgz binary
+*.png binary
+
+# Build output: collapsed in GitHub diffs and left out of language statistics.
+dist/*.html linguist-generated=true

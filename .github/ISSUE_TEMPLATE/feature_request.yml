@@ -1,0 +1,39 @@
+name: Feature request / 功能建議
+description: Suggest a new feature or an improvement. 提出新功能或改進建議。
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: English or Chinese is fine. 中英文皆可。
+  - type: textarea
+    id: task
+    attributes:
+      label: What are you trying to do? / 你想完成什麼？
+      description: Describe the editing task and the kind of page (report, slides, landing page…), not only the button you want.
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: How do you do it today? / 現在怎麼做？
+      description: What you tried in Tactile, and where it falls short.
+  - type: textarea
+    id: idea
+    attributes:
+      label: Suggested solution / 建議做法
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area / 範圍
+      multiple: true
+      options:
+        - Canvas editing / 畫布編輯
+        - Layers or insert / 圖層與插入
+        - Inspector / 屬性面板
+        - Effects / 動態效果
+        - AI assistant / AI 助理
+        - Files and export / 檔案與匯出
+        - Sources of numbers and charts / 數字的出處與圖表
+        - Interface language / 介面語言
+        - Enterprise or deployment / 企業部署
+        - Other / 其他

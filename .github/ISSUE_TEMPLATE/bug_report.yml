@@ -1,0 +1,71 @@
+name: Bug report / 問題回報
+description: Something in the editor does not work as expected. 編輯器沒有照預期運作。
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. English or Chinese is fine. 中英文皆可。
+
+        **Security problems** (a page script reaching the editor or your API key, script getting past the consent prompt) must not be reported here: see SECURITY.md.
+        **Never paste an API key**, and remove confidential content from any HTML you attach.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened / 發生了什麼
+      description: What you did, what you expected, and what happened instead.
+      placeholder: |
+        1. Open the "Sample: Quarterly business review" template
+        2. Double-click the title and type …
+        3. Expected … but …
+    validations:
+      required: true
+  - type: textarea
+    id: sample
+    attributes:
+      label: Sample HTML / 範例 HTML
+      description: The smallest document that shows the problem, or say which built-in template you used.
+      render: html
+  - type: dropdown
+    id: build
+    attributes:
+      label: Build / 版本形式
+      options:
+        - dist/tactile.html opened from disk (file://)
+        - tactile.html served over http(s)
+        - claude.ai Artifact
+        - src/index.html (development)
+        - tactile-ingest (command line)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Release or commit / 版本或 commit
+      placeholder: v0.1.0, or the commit hash
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS / 瀏覽器與作業系統
+      placeholder: Chrome 156 on Windows 11
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Mode / 模式
+      multiple: true
+      options:
+        - Edit mode / 編輯模式
+        - Preview / 預覽
+        - Preview with scripts running / 預覽且腳本執行中
+        - Compat mode / 相容模式
+        - AI assistant / AI 助理
+        - Export / 匯出
+        - Sources of numbers (ingest, fill, verify) / 數字的出處
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors / 主控台錯誤
+      description: Errors from the browser's developer tools console, if any.
+      render: text

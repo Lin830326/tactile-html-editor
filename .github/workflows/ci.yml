@@ -1,0 +1,39 @@
+name: Build and browser tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Verify generated files
+        run: |
+          node build.mjs
+          git diff --exit-code -- dist src/js/workbook-core.js
+      - name: Links to the repository match package.json
+        run: node tools/set-repo.mjs --check
+      - name: Interface texts have their English
+        run: node tools/i18n-check.mjs
+      # The editor's tests run tactile-ingest (fill, verify) on what the editor wrote: its packages come first.
+      - name: Ingest package tests
+        run: |
+          npm ci --ignore-scripts
+          npm test
+        working-directory: ingest
+      - run: npm test

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tactile HTML editor</title>
+<!-- @build:head-start -->
+<!-- @build:css -->
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/canvas.css">
+<link rel="stylesheet" href="css/inspector.css">
+<link rel="stylesheet" href="css/left.css">
+<link rel="stylesheet" href="css/ai.css">
+<link rel="stylesheet" href="css/fileio.css">
+<link rel="stylesheet" href="css/provenance.css">
+<link rel="stylesheet" href="css/pages.css">
+<!-- @build:css-end -->
+</head>
+<body>
+<!-- @build:body-start -->
+<div id="app" class="app">
+  <header id="topbar" class="topbar">
+    <button class="btn icon ghost only-narrow" id="btn-drawer-left" type="button" aria-label="圖層與插入" title="圖層與插入"></button>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">T</span><span class="brand-name">Tactile</span></div>
+    <input id="doc-name" class="doc-name" type="text" value="untitled.html" aria-label="檔案名稱" spellcheck="false">
+    <div id="toolbar-file" class="tb-group"></div>
+    <span class="tb-sep"></span>
+    <div class="tb-group">
+      <button class="btn icon ghost" id="btn-undo" type="button" aria-label="復原" disabled></button>
+      <button class="btn icon ghost" id="btn-redo" type="button" aria-label="重做" disabled></button>
+    </div>
+    <span class="tb-sep"></span>
+    <div id="toolbar-view" class="tb-group"></div>
+    <div class="spacer"></div>
+    <div id="toolbar-right" class="tb-group"></div>
+    <button class="btn icon ghost only-narrow" id="btn-drawer-right" type="button" aria-label="設計與 AI" title="設計與 AI"></button>
+  </header>
+
+  <aside id="left-panel" class="panel panel-left" data-tabs="left" aria-label="結構">
+    <nav class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="layers" aria-selected="true">圖層</button>
+      <button type="button" role="tab" data-tab="insert" aria-selected="false">插入</button>
+      <button type="button" role="tab" data-tab="pages" aria-selected="false">頁面</button>
+    </nav>
+    <section class="pane" data-pane="layers" id="layers-pane" role="tabpanel"></section>
+    <section class="pane" data-pane="insert" id="insert-pane" role="tabpanel" hidden></section>
+    <section class="pane" data-pane="pages" id="pages-pane" role="tabpanel" hidden></section>
+  </aside>
+
+  <main id="stage" class="stage">
+    <div id="canvas-host" class="canvas-host"></div>
+  </main>
+
+  <aside id="right-panel" class="panel panel-right" data-tabs="right" aria-label="設計">
+    <nav class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="design" aria-selected="true">設計</button>
+      <button type="button" role="tab" data-tab="ai" aria-selected="false">AI 助理</button>
+      <button type="button" role="tab" data-tab="prov" aria-selected="false">出處</button>
+    </nav>
+    <section class="pane" data-pane="design" id="inspector-pane" role="tabpanel"></section>
+    <section class="pane" data-pane="ai" id="ai-pane" role="tabpanel" hidden></section>
+    <section class="pane" data-pane="prov" id="prov-pane" role="tabpanel" hidden></section>
+  </aside>
+
+  <footer id="statusbar" class="statusbar">
+    <nav id="status-breadcrumb" class="breadcrumb" aria-label="選取路徑"></nav>
+    <div id="status-msg" class="status-msg" role="status"></div>
+    <div id="status-save" class="status-save"></div>
+  </footer>
+</div>
+<div id="layer-root"></div>
+<!-- @build:body-end -->
+<!-- @build:js -->
+<script src="js/core.js"></script>
+<script src="js/lang-en.js"></script>
+<script src="js/lang-zh-cn.js"></script>
+<script src="js/effects.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/inspector.js"></script>
+<script src="js/layers.js"></script>
+<script src="js/insert.js"></script>
+<script src="js/contextmenu.js"></script>
+<script src="js/design.js"></script>
+<script src="js/snap.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/vendor/xlsx.mini.min.js"></script>
+<script src="js/workbook-core.js"></script>
+<script src="js/ingest-core.js"></script>
+<script src="js/ingest-text.js"></script>
+<script src="js/sources.js"></script>
+<script src="js/samples.js"></script>
+<script src="js/samples-en.js"></script>
+<script src="js/samples-zh-hans.js"></script>
+<script src="js/samples-site.js"></script>
+<script src="js/fileio.js"></script>
+<script src="js/provenance.js"></script>
+<script src="js/fill.js"></script>
+<script src="js/pages.js"></script>
+<script src="js/island.js"></script>
+<script src="js/tidy.js"></script>
+<script src="js/app.js"></script>
+<!-- @build:js-end -->
+</body>
+</html>

@@ -1,0 +1,225 @@
+/* Tactile — canvas.css: the page frame on the stage, the selection overlay and the canvas toolbars.
+   The stage itself (dotted desk) is styled by base.css (.stage). Overlay colours derive from --sel / --hover;
+   the frame is page paper, so it stays white in both themes like a browser tab would. */
+
+/* ---------------- view toolbar (#toolbar-view) ---------------- */
+.cv-toolbar { gap: 6px; }
+.cv-scripts { gap: 5px; padding: 0 9px; }
+.cv-scripts > svg:last-child { margin-left: -2px; opacity: .7; }
+.btn.ghost.cv-scripts.active { border-color: transparent; }
+/* Compat mode: the page's scripts run with the editor's origin while editing. */
+.cv-scripts.is-compat, .cv-scripts.is-compat:hover { color: var(--warn); }
+.cv-compat { gap: 4px; padding: 0 7px; background: transparent; border-color: var(--warn); color: var(--warn); }
+.cv-compat:hover { background: var(--panel-2); color: var(--warn); }
+.cv-run-label { gap: 4px; color: var(--ok); }
+/* After compat mode, until the tab reloads: the run frame is isolated, the editor may not be. */
+.cv-run-label.is-tainted { color: var(--warn); }
+.cv-run-label.is-stopped { color: var(--warn); }
+@media (max-width: 520px) {
+  .cv-scripts .cv-btn-text, .cv-compat .cv-btn-text, .cv-run-label .cv-btn-text { display: none; }
+  .cv-run-label[data-state^="blocked"] .cv-btn-text { display: inline; }
+  .cv-scripts { width: 30px; padding: 0; }
+  .cv-scripts > svg:last-child { display: none; }
+  .cv-run-label { padding: 0 6px; }
+}
+
+/* ---------------- stage layout ---------------- */
+.cv-host { overflow: hidden; }
+.cv-viewport { position: absolute; inset: 0; overflow: auto; }
+.cv-wrap {
+  position: relative;
+  width: 100%; height: 100%;
+  margin: 0 auto;
+  display: flex; flex-direction: column;
+}
+.cv-viewport[data-device="tablet"] .cv-wrap,
+.cv-viewport[data-device="phone"] .cv-wrap {
+  height: calc(100% - 46px);
+  min-height: 240px;
+  margin-top: 30px; margin-bottom: 16px;
+}
+/* A foldable keeps its real screen size (set inline); the stage scrolls when it is taller. */
+.cv-viewport[data-device="fold"] .cv-wrap { flex: none; margin-top: 30px; margin-bottom: 16px; }
+.cv-device-label {
+  position: absolute; left: 0; right: 0; top: -22px;
+  text-align: center; pointer-events: none;
+  font: 11px/16px var(--font-mono); color: var(--text-3); letter-spacing: .02em;
+  white-space: nowrap;
+}
+.cv-frame-box {
+  position: relative;
+  flex: 1 1 auto; min-height: 0;
+  background: #fff;
+}
+.cv-viewport[data-device="tablet"] .cv-frame-box,
+.cv-viewport[data-device="phone"] .cv-frame-box,
+.cv-viewport[data-device="fold"] .cv-frame-box {
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px var(--line), var(--shadow);
+}
+/* The fold of an open foldable: a soft shadow band with a dashed centre line, visible on light and dark pages. */
+.cv-crease { position: absolute; z-index: 1; pointer-events: none; }
+.cv-crease[data-dir="vertical"] {
+  top: 0; bottom: 0; left: calc(50% - 8px); width: 16px;
+  background:
+    linear-gradient(90deg, transparent, rgba(0, 0, 0, .07) 45%, rgba(255, 255, 255, .12) 55%, transparent),
+    repeating-linear-gradient(180deg, rgba(128, 128, 128, .55) 0 6px, transparent 6px 12px) center / 1px 100% no-repeat;
+}
+.cv-crease[data-dir="horizontal"] {
+  left: 0; right: 0; top: calc(50% - 8px); height: 16px;
+  background:
+    linear-gradient(180deg, transparent, rgba(0, 0, 0, .07) 45%, rgba(255, 255, 255, .12) 55%, transparent),
+    repeating-linear-gradient(90deg, rgba(128, 128, 128, .55) 0 6px, transparent 6px 12px) center / 100% 1px no-repeat;
+}
+.cv-frame {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: 0; display: block;
+  background: #fff;
+}
+.cv-viewport[data-device="tablet"] .cv-frame,
+.cv-viewport[data-device="phone"] .cv-frame { border-radius: 4px; }
+/* Phones and tablets overlay their scrollbars (canvas.js, NO_PAGE_SCROLLBARS). In WebKit the frame's scrollbar
+   follows the rules that match the <iframe> here, so the 10px of base.css has to be taken back on this side. */
+.cv-viewport:not([data-device="desktop"]) .cv-frame::-webkit-scrollbar { display: none; }
+.cv-frame.is-pending { visibility: hidden; }
+/* The isolated run frame shows: the edit frame stays laid out underneath (layout reads keep working) but takes no input. */
+.cv-frame-box.is-running > .cv-frame:not(.cv-run) { visibility: hidden; }
+/* Over the run frame once its guard reports a file drag the page did not take, so the drop reaches the editor. */
+.cv-run-shield { position: absolute; inset: 0; z-index: 3; }
+
+/* ---------------- overlay ---------------- */
+.cv-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  contain: layout style;
+}
+.cv-viewport[data-mode="preview"] .cv-overlay { display: none; }
+.cv-hover, .cv-box, .cv-flash, .cv-drop { position: absolute; left: 0; top: 0; will-change: transform; }
+
+.cv-hover { box-shadow: inset 0 0 0 1px var(--hover); border-radius: 1px; }
+.cv-tag {
+  position: absolute; left: 0; bottom: 100%; margin-bottom: 2px;
+  max-width: 220px; padding: 0 5px; border-radius: 3px;
+  background: var(--hover); color: #fff;
+  font: 500 10px/15px var(--font-mono);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cv-hover.tag-inside .cv-tag { bottom: auto; top: 2px; left: 2px; margin: 0; }
+
+.cv-box::before {
+  content: ""; position: absolute; inset: 0;
+  border: 1.5px solid var(--sel); border-radius: 1px;
+}
+.cv-primary::before { border-width: 2px; }
+.cv-primary.is-editing::before { border-width: 1.5px; box-shadow: 0 0 0 3px var(--sel-soft); }
+.cv-chip {
+  position: absolute; left: 0; bottom: 100%; margin-bottom: 3px;
+  display: flex; align-items: center; gap: 8px;
+  max-width: 300px; padding: 0 6px; border-radius: 4px;
+  background: var(--sel); color: #fff;
+  font: 500 10.5px/17px var(--font-mono);
+  white-space: nowrap;
+  pointer-events: auto; cursor: grab;
+}
+.cv-chip:active { cursor: grabbing; }
+.cv-chip-grip { display: inline-flex; margin: 0 -4px 0 -2px; opacity: .8; }
+.cv-chip-grip svg { stroke-width: 3.2; }
+.cv-primary.chip-inside .cv-chip { bottom: auto; top: 4px; left: 4px; margin: 0; }
+.cv-chip-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.cv-chip-dims { flex: none; opacity: .82; }
+
+.cv-handle {
+  position: absolute;
+  width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px;
+  background: #fff; border: 1.5px solid var(--sel); border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+  pointer-events: auto;
+}
+.cv-handle::after { content: ""; position: absolute; inset: -6px; } /* larger hit area */
+.cv-handle[data-dir="nw"] { left: 0; top: 0; cursor: nwse-resize; }
+.cv-handle[data-dir="n"] { left: 50%; top: 0; cursor: ns-resize; }
+.cv-handle[data-dir="ne"] { left: 100%; top: 0; cursor: nesw-resize; }
+.cv-handle[data-dir="e"] { left: 100%; top: 50%; cursor: ew-resize; }
+.cv-handle[data-dir="se"] { left: 100%; top: 100%; cursor: nwse-resize; }
+.cv-handle[data-dir="s"] { left: 50%; top: 100%; cursor: ns-resize; }
+.cv-handle[data-dir="sw"] { left: 0; top: 100%; cursor: nesw-resize; }
+.cv-handle[data-dir="w"] { left: 0; top: 50%; cursor: ew-resize; }
+.cv-primary.no-handles .cv-handle { display: none; }
+.cv-primary.is-small .cv-handle[data-dir="n"],
+.cv-primary.is-small .cv-handle[data-dir="s"],
+.cv-primary.is-small .cv-handle[data-dir="e"],
+.cv-primary.is-small .cv-handle[data-dir="w"] { display: none; }
+
+/* drop indicator: a line between siblings, or a dashed box when dropping into an empty container */
+.cv-drop {
+  background: var(--sel); border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .85);
+}
+.cv-drop.is-h::before, .cv-drop.is-h::after,
+.cv-drop.is-v::before, .cv-drop.is-v::after {
+  content: ""; position: absolute;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--sel); box-shadow: 0 0 0 1px rgba(255, 255, 255, .85);
+}
+.cv-drop.is-h::before { left: -3px; top: -2.5px; }
+.cv-drop.is-h::after { right: -3px; top: -2.5px; }
+.cv-drop.is-v::before { top: -3px; left: -2.5px; }
+.cv-drop.is-v::after { bottom: -3px; left: -2.5px; }
+.cv-drop.is-box {
+  background: var(--sel-soft);
+  border: 1.5px dashed var(--sel); border-radius: 4px;
+  box-shadow: none;
+}
+
+.cv-flash {
+  border: 2px solid var(--sel); border-radius: 4px;
+  animation: cv-flash 1.4s ease-out forwards;
+}
+@keyframes cv-flash {
+  0% { opacity: 0; box-shadow: 0 0 0 0 var(--sel-soft); }
+  15% { opacity: 1; }
+  55% { opacity: 1; box-shadow: 0 0 0 8px var(--sel-soft); }
+  100% { opacity: 0; box-shadow: 0 0 0 12px transparent; }
+}
+
+/* ---------------- gesture chrome ---------------- */
+.cv-ghost {
+  position: fixed; left: 0; top: 0; z-index: 990;
+  pointer-events: none;
+  max-width: 260px; padding: 2px 8px; border-radius: 6px;
+  background: var(--sel); color: #fff;
+  font: 500 11px/18px var(--font-mono);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  box-shadow: var(--shadow-lg);
+}
+.cv-shield { position: fixed; inset: 0; z-index: 980; background: transparent; }
+html.cv-dragging, html.cv-dragging * { -webkit-user-select: none !important; user-select: none !important; }
+
+/* ---------------- floating text toolbar ---------------- */
+.cv-tbar {
+  position: fixed; left: 0; top: 0; z-index: 960;
+  display: flex; align-items: center; gap: 1px;
+  max-width: calc(100vw - 8px);
+  padding: 3px; border-radius: var(--radius);
+  background: var(--panel); border: 1px solid var(--line);
+  box-shadow: var(--shadow-lg);
+  animation: he-fade .12s ease-out;
+}
+.cv-tbar .btn.icon.sm { width: 26px; height: 26px; flex: none; }
+.cv-tbar-sep { width: 1px; height: 18px; margin: 0 3px; background: var(--line); flex: none; }
+.cv-tf-swatch { position: relative; flex-direction: column; gap: 1px; cursor: pointer; }
+.cv-tf-swatch input {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  margin: 0; padding: 0; border: 0;
+  opacity: 0; cursor: pointer;
+}
+.cv-tf-swatch:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+.cv-tf-bar { width: 14px; height: 3px; border-radius: 1px; box-shadow: 0 0 0 1px var(--line-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-flash { animation: none; opacity: 1; }
+  .cv-tbar { animation: none; }
+}

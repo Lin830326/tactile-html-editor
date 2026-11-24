@@ -1,0 +1,17 @@
+tactileRules: 1
+report: 季營運報告
+approvedBy: 林雅婷
+approvedOn: 2026-11-10
+rules:
+  - id: 營收合計
+    type: sum
+    total: 2026Q3.xlsx/損益表/D14
+    parts: 2026Q3.xlsx/損益表/D10:D13
+    tolerance: 0
+
+  - id: 兩表營收一致
+    type: equal
+    left: 2026Q3.xlsx/損益表/D14
+    right: 2026Q3.xlsx/摘要/B3
+    tolerance: 0
+    note: 摘要表的營收引用損益表的合計

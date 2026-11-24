@@ -1,0 +1,39 @@
+tactileRules: 1
+report: 云杉供应链季度经营报告
+rules:
+  - id: 各板块相加等于营业收入合计（2026年三季度）
+    type: sum
+    total: 2026Q3.xlsx/利润表/D14
+    parts: 2026Q3.xlsx/利润表/D10:D13
+    tolerance: 0
+
+  - id: 各板块相加等于营业收入合计（2025年三季度）
+    type: sum
+    total: 2026Q3.xlsx/利润表/B14
+    parts: 2026Q3.xlsx/利润表/B10:B13
+    tolerance: 0
+
+  - id: 各板块相加等于营业收入合计（2026年二季度）
+    type: sum
+    total: 2026Q3.xlsx/利润表/C14
+    parts: 2026Q3.xlsx/利润表/C10:C13
+    tolerance: 0
+
+  - id: 摘要的营业收入等于利润表的合计
+    type: equal
+    left: 2026Q3.xlsx/摘要/B2
+    right: 2026Q3.xlsx/利润表/D14
+    tolerance: 0
+    note: 摘要工作表的营业收入取自利润表
+
+  - id: 摘要的营业利润等于利润表的营业利润
+    type: equal
+    left: 2026Q3.xlsx/摘要/B4
+    right: 2026Q3.xlsx/利润表/D18
+    tolerance: 0
+
+  - id: 折线图最后一个季度等于利润表的合计
+    type: equal
+    left: 2026Q3.xlsx/季度/B6
+    right: 2026Q3.xlsx/利润表/D14
+    tolerance: 0

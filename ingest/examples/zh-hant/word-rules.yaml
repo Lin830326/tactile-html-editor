@@ -1,0 +1,13 @@
+tactileRules: 1
+report: 第三季摘要（來源是 Word 文件）
+rules:
+  - id: 營收合計
+    type: sum
+    total: 2026Q3.docx/t1/D6
+    parts: 2026Q3.docx/t1/D2:D5
+    tolerance: 0
+
+  - id: 內文與表格的營收一致
+    type: equal
+    left: 2026Q3.docx/body/B2
+    right: 2026Q3.docx/t1/D6

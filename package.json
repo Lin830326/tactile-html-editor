@@ -1,0 +1,19 @@
+{
+  "name": "tactile-html-editor",
+  "version": "0.1.0",
+  "description": "Edit AI-generated HTML by hand, like a slide deck: click, type, drag. One offline HTML file.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lin830326/tactile-html-editor.git"
+  },
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "playwright test",
+    "eval:injection": "node evals/injection.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1"
+  }
+}

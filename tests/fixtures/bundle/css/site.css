@@ -1,0 +1,7 @@
+@charset "utf-8";
+@import "extra.css";
+/* A path in a comment is not a reference: url(not/a/real.png) */
+@font-face { font-family: Bundled; src: url("../fonts/demo.woff2") format("woff2"); }
+h1 { color: rgb(154, 52, 18); font-family: Bundled, sans-serif; }
+.band { height: 40px; background: url(../img/bg.png) repeat-x; }
+.gone { background: url(../img/nope.png); }

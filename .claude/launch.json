@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tactile",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "3917", "--bind", "127.0.0.1"],
+      "port": 3917
+    }
+  ]
+}

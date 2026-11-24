@@ -1,0 +1,13 @@
+tactileRules: 1
+report: 第三季摘要（來源是 PDF）
+rules:
+  - id: 營收合計
+    type: sum
+    total: 2026Q3.pdf/p1/D10
+    parts: 2026Q3.pdf/p1/D6:D9
+    tolerance: 0
+
+  - id: 內文與表格的營收一致
+    type: equal
+    left: 2026Q3.pdf/p1n/A2
+    right: 2026Q3.pdf/p1/D10

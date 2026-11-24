@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>合成圖表</title>
+<style>
+body{margin:0;background:#f1f4f8;color:#17243a;font:16px/1.6 system-ui,sans-serif} main{max-width:860px;margin:32px auto;padding:32px;background:white} h1{margin-top:0} .chart-panel{padding:18px;background:#edf3ff;border:1px solid #c5d4ee} svg{display:block;max-width:100%;height:auto} .axis{stroke:#72809a;stroke-width:1} .label{font:14px system-ui,sans-serif;fill:#243247} table{border-collapse:collapse;margin-top:20px} th,td{padding:8px 16px;border:1px solid #aab6c8;text-align:left} @media(max-width:600px){main{margin:0;padding:20px}}
+</style>
+</head>
+<body>
+<main>
+<h1 id="chart-title">合成季度圖表</h1>
+<p>圖表與表格均為虛構數字。</p>
+<section id="chart-panel" class="chart-panel" aria-label="圖表容器">
+<h2>三組比較</h2>
+<svg viewBox="0 0 600 230" role="img" aria-labelledby="svg-title svg-desc"><title id="svg-title">三組比較長條圖</title><desc id="svg-desc">甲組 12，乙組 8，丙組 5。</desc><line class="axis" x1="75" y1="190" x2="550" y2="190"/><rect x="110" y="70" width="80" height="120" fill="#315dcc"/><rect x="260" y="110" width="80" height="80" fill="#1b8a78"/><rect x="410" y="140" width="80" height="50" fill="#d77b2b"/><g class="label"><text x="138" y="60">12</text><text x="288" y="100">8</text><text x="438" y="130">5</text><text x="135" y="215">甲組</text><text x="285" y="215">乙組</text><text x="435" y="215">丙組</text></g></svg>
+</section>
+<table><caption>圖表數據</caption><thead><tr><th scope="col">組別</th><th scope="col">數值</th></tr></thead><tbody><tr><td>甲組</td><td>12</td></tr><tr><td>乙組</td><td>8</td></tr><tr><td>丙組</td><td>5</td></tr></tbody></table>
+<p>檢查標記：圖表結尾 B29</p>
+</main>
+</body>
+</html>

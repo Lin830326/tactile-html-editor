@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>合成設計檢查樣本</title>
+<style>
+  body { margin: 0; padding: 24px; font: 16px/1.6 system-ui, sans-serif; color: #1f2937; background: #ffffff; }
+  h1 { margin: 0 0 16px; font-size: 32px; font-weight: 700; }
+  h2, h3, h4, p { margin: 0 0 16px; }
+  section { margin: 0 0 32px; }
+  .card { padding: 16px; background: #f3f4f6; color: #111827; }
+  .row { margin: 0 0 16px; }
+  #uneven { list-style: none; margin: 0 0 16px; padding: 0; }
+</style>
+</head>
+<body>
+  <h1 id="title">設計檢查樣本</h1>
+
+  <section id="clean">
+    <h2 id="clean-heading" style="font-size: 28px; font-weight: 700;">沒有問題的區塊</h2>
+    <p id="clean-text">這段文字的顏色和背景對比足夠，字級也夠大，用來確認檢查不會誤報。</p>
+    <div id="cards" style="display: flex; gap: 16px;">
+      <div class="card"><p class="row">第一張卡片</p></div>
+      <div class="card"><p class="row">第二張卡片</p></div>
+      <div class="card"><p class="row">第三張卡片</p></div>
+    </div>
+  </section>
+
+  <section id="contrast">
+    <p id="low" style="color: #aaaaaa;">對比太低的灰字，幾乎看不清楚。</p>
+    <p id="mid" style="color: #808080;">對比略低的灰字，不到一般文字的標準。</p>
+    <p id="large-ok" style="color: #808080; font-size: 28px; font-weight: 700;">大字可以接受較低的對比</p>
+    <div id="grad-box" style="background: linear-gradient(90deg, #ffffff, #1e3a8a); padding: 16px;">
+      <p id="grad-text" style="color: #ffffff; margin: 0;">漸層背景上的白字，左半邊看不見。</p>
+    </div>
+    <p><a id="line-link" href="#contrast" style="color: #1e293b; background-image: linear-gradient(#1e3a8a, #1e3a8a); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 0.1em;">畫著深色細底線的連結</a></p>
+    <div id="photo" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%2210%22%3E%3Crect width=%2210%22 height=%2210%22 fill=%22%23336%22/%3E%3C/svg%3E'); padding: 16px;">
+      <p id="on-image" style="color: #ffffff; margin: 0;">壓在圖片上的文字</p>
+    </div>
+  </section>
+
+  <section id="type">
+    <p id="tiny" style="font-size: 10px;">太小的註解文字，在手機上很難閱讀。</p>
+    <h2 id="h2-small" style="font-size: 18px;">比下一層還小的二級標題</h2>
+    <h3 id="h3-big" style="font-size: 26px;">比上一層還大的三級標題</h3>
+    <h4 id="h4-flat" style="font-size: 16px; font-weight: 400;">看起來和內文一樣的四級標題</h4>
+    <p class="row">一般內文，用來決定內文的字級。這一段寫得比較長，讓內文的字數比標題多很多。</p>
+    <p class="row">一般內文，用來決定內文的字級。這一段寫得比較長，讓內文的字數比標題多很多。</p>
+  </section>
+
+  <section id="layout">
+    <div id="wide" style="width: 2400px; background: #f3f4f6;">
+      <p id="wide-text" style="margin: 0;">這個區塊比頁面還寬，會讓頁面可以左右捲動。</p>
+    </div>
+    <div id="clip-box" style="width: 300px; height: 40px; overflow: hidden; line-height: 24px; margin: 16px 0;">
+      <p id="clip-text" style="margin: 0;">這段文字放在固定高度又隱藏溢出的框裡，第二行之後的內容會被裁掉，讀者看不到後面的句子。</p>
+    </div>
+    <p id="ellipsis" style="width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">刻意用刪節號截斷的長標題文字不算問題</p>
+    <span id="sr" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;">只給螢幕閱讀器的說明文字</span>
+    <p id="tight-title" style="font-size: 64px; line-height: .8; font-weight: 900; margin: 0;">Kite 2</p>
+    <p id="tight-text" style="margin: 0 0 16px;">緊接在大字下面的文字，字的外框重疊但字形沒有碰到。</p>
+    <details id="faq-1"><summary>收合的問題一</summary><p id="faq-answer">收合時看不到的答案，不該算重疊。</p></details>
+    <details id="faq-2"><summary id="faq-question">收合的問題二</summary><p>另一個收合的答案。</p></details>
+    <div id="stack" style="position: relative; height: 64px;">
+      <p id="over-a" style="position: absolute; top: 0; left: 0; margin: 0; font-size: 20px;">重疊的文字甲</p>
+      <p id="over-b" style="position: absolute; top: 6px; left: 12px; margin: 0; font-size: 20px;">重疊的文字乙</p>
+    </div>
+  </section>
+
+  <section id="spacing">
+    <p class="row">間距一致的段落一</p>
+    <p class="row">間距一致的段落二</p>
+    <p id="odd-space" style="margin: 0 0 15px;">差一像素的間距</p>
+    <ul id="uneven">
+      <li class="item" style="margin-bottom: 8px;">清單項目一</li>
+      <li class="item" style="margin-bottom: 32px;">清單項目二</li>
+      <li class="item">清單項目三</li>
+    </ul>
+  </section>
+</body>
+</html>

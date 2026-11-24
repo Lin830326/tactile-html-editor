@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>雲朵物流 第三季營運報告</title>
+<style>
+  body { margin: 0; font: 16px/1.7 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; color: #16202b; background: #f4f6f8; }
+  main { max-width: 760px; margin: 0 auto; padding: 48px 24px; }
+  h1 { font-size: 28px; margin: 0 0 8px; }
+  .lead { color: #4a5a6a; margin: 0 0 32px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 0 0 32px; }
+  .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(22, 32, 43, .08); }
+  .card h2 { font-size: 14px; font-weight: 500; color: #4a5a6a; margin: 0 0 4px; }
+  .card p { font-size: 30px; font-weight: 700; margin: 0; font-variant-numeric: tabular-nums; }
+  .card small { font-size: 14px; font-weight: 400; color: #4a5a6a; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; }
+  th, td { padding: 10px 16px; text-align: right; border-bottom: 1px solid #e3e8ed; font-variant-numeric: tabular-nums; }
+  th:first-child, td:first-child { text-align: left; }
+  tfoot td { font-weight: 700; border-bottom: 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1 data-fact-none="標題的期間">雲朵物流 2026 第三季營運報告</h1>
+  <p class="lead">資料日期 <span data-fact="2026Q3.xlsx/損益表/B2"></span></p>
+
+  <div class="cards">
+    <div class="card">
+      <h2>營業收入</h2>
+      <p><span data-fact="2026Q3.xlsx/損益表/D14" data-fact-scale="1e-8" data-fact-digits="2"></span> <small>億元</small></p>
+    </div>
+    <div class="card">
+      <h2>季成長率</h2>
+      <p><span data-fact="2026Q3.xlsx/損益表/D15" data-fact-scale="100" data-fact-digits="1" data-fact-sign="always"></span><small>%</small></p>
+    </div>
+    <div class="card">
+      <h2>準時率</h2>
+      <p><span data-fact="2026Q3.xlsx/損益表/D20"></span></p>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>項目</th><th>金額（百萬元）</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>倉儲服務</td><td data-fact="2026Q3.xlsx/損益表/D10" data-fact-scale="1e-6" data-fact-digits="1"></td></tr>
+      <tr><td>配送服務</td><td data-fact="2026Q3.xlsx/損益表/D11" data-fact-scale="1e-6" data-fact-digits="1"></td></tr>
+      <tr><td>加值服務</td><td data-fact="2026Q3.xlsx/損益表/D12" data-fact-scale="1e-6" data-fact-digits="1"></td></tr>
+      <tr><td>其他</td><td data-fact="2026Q3.xlsx/損益表/D13" data-fact-scale="1e-6" data-fact-digits="1"></td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td>營業收入合計</td><td data-fact="2026Q3.xlsx/損益表/D14" data-fact-scale="1e-6" data-fact-digits="1"></td></tr>
+    </tfoot>
+  </table>
+</main>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "about": "Shown text per docs/spec/provenance.md 6.3. Read by ingest/test/fill.test.mjs and tests/provenance.spec.js: fill and the editor must agree on every row.",
+  "shown": [
+    { "fact": { "type": "number", "value": 482000000, "text": "482,000,000" }, "attrs": { "scale": "1e-8", "digits": "2" }, "want": "4.82" },
+    { "fact": { "type": "number", "value": 0.1065, "text": "10.65%" }, "attrs": { "scale": "100", "digits": "1" }, "want": "10.7" },
+    { "fact": { "type": "number", "value": 1234567.5, "text": "1234567.5" }, "attrs": { "digits": "0" }, "want": "1,234,568" },
+    { "fact": { "type": "number", "value": -0.004, "text": "-0.004" }, "attrs": { "digits": "2" }, "want": "0.00" },
+    { "fact": { "type": "number", "value": 2.675, "text": "2.675" }, "attrs": { "digits": "2" }, "want": "2.68" },
+    { "fact": { "type": "number", "value": -2.675, "text": "-2.675" }, "attrs": { "digits": "2" }, "want": "-2.68" },
+    { "fact": { "type": "number", "value": 0.069, "text": "6.9%" }, "attrs": { "scale": "100", "digits": "1", "sign": "always" }, "want": "+6.9" },
+    { "fact": { "type": "number", "value": 1234567, "text": "1,234,567" }, "attrs": { "digits": "0", "group": "off" }, "want": "1234567" },
+    { "fact": { "type": "number", "value": 1e21, "text": "1E+21" }, "attrs": { "scale": "1e-18", "digits": "0" }, "want": "1,000" },
+    { "fact": { "type": "number", "value": 0.5, "text": "0.5" }, "attrs": { "scale": ".001", "digits": "4" }, "want": "0.0005" },
+    { "fact": { "type": "number", "value": 482000000, "text": "482,000,000" }, "attrs": {}, "want": "482,000,000" },
+    { "fact": { "type": "date", "value": "2026-09-30", "text": "2026-09-30" }, "attrs": {}, "want": "2026-09-30" },
+    { "fact": { "type": "text", "value": "準時率", "text": "準時率" }, "attrs": { "digits": "1" }, "error": true },
+    { "fact": { "type": "number", "value": 1, "text": "1" }, "attrs": { "scale": "-2" }, "error": true },
+    { "fact": { "type": "number", "value": 1, "text": "1" }, "attrs": { "scale": "0" }, "error": true },
+    { "fact": { "type": "number", "value": 1, "text": "1" }, "attrs": { "digits": "11" }, "error": true },
+    { "fact": { "type": "number", "value": 1, "text": "1" }, "attrs": { "group": "yes" }, "error": true },
+    { "fact": { "type": "number", "value": 1, "text": "1" }, "attrs": { "sign": "plus" }, "error": true }
+  ],
+  "rules": [
+    { "item": { "id": "a", "type": "sum", "total": "t", "parts": ["x", "y"], "tolerance": "0" }, "facts": { "t": { "type": "number", "value": 0.3 }, "x": { "type": "number", "value": 0.1 }, "y": { "type": "number", "value": 0.2 } }, "want": { "result": "pass", "left": "0.3", "right": "0.3", "diff": "0" } },
+    { "item": { "id": "b", "type": "equal", "left": "x", "right": "y", "tolerance": "0.5" }, "facts": { "x": { "type": "number", "value": 100.4 }, "y": { "type": "number", "value": 100 } }, "want": { "result": "pass", "left": "100.4", "right": "100", "diff": "0.4" } },
+    { "item": { "id": "c", "type": "equal", "left": "x", "right": "y", "tolerance": "0.5" }, "facts": { "x": { "type": "number", "value": 99 }, "y": { "type": "number", "value": 100 } }, "want": { "result": "fail", "left": "99", "right": "100", "diff": "-1" } },
+    { "item": { "id": "d", "type": "sum", "total": "t", "parts": ["x"], "tolerance": "0" }, "facts": { "t": { "type": "number", "value": 1 }, "x": { "type": "error", "value": "#DIV/0!" } }, "want": { "result": "unknown" } },
+    { "item": { "id": "e", "type": "equal", "left": "x", "right": "gone" }, "facts": { "x": { "type": "number", "value": 1 } }, "want": { "result": "unknown" } }
+  ]
+}

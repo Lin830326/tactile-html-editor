@@ -1,0 +1,33 @@
+tactileRules: 1
+report: Brightpine Holdings quarterly financial report
+rules:
+  - id: Segments add up to total revenue (Q3 2026)
+    type: sum
+    total: 2026Q3.xlsx/Income/D14
+    parts: 2026Q3.xlsx/Income/D10:D13
+    tolerance: 0
+
+  - id: Segments add up to total revenue (Q3 2025)
+    type: sum
+    total: 2026Q3.xlsx/Income/B14
+    parts: 2026Q3.xlsx/Income/B10:B13
+    tolerance: 0
+
+  - id: Summary revenue equals the income statement total
+    type: equal
+    left: 2026Q3.xlsx/Summary/B2
+    right: 2026Q3.xlsx/Income/D14
+    tolerance: 0
+    note: The summary sheet takes its revenue from the income statement
+
+  - id: Summary operating income equals the income statement
+    type: equal
+    left: 2026Q3.xlsx/Summary/B4
+    right: 2026Q3.xlsx/Income/D18
+    tolerance: 0
+
+  - id: Trend chart ends on the income statement total
+    type: equal
+    left: 2026Q3.xlsx/Quarters/B6
+    right: 2026Q3.xlsx/Income/D14
+    tolerance: 0

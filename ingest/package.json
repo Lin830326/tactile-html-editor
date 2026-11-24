@@ -1,0 +1,26 @@
+{
+  "name": "tactile-ingest",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reads source files into facts with cell addresses, for reports whose numbers can be traced back.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "tactile-ingest": "bin/tactile-ingest.mjs"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "volta": {
+    "node": "24.22.3"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {
+    "parse5": "8.0.1",
+    "pdfjs-dist": "6.5.438",
+    "xlsx": "file:vendor/xlsx-0.20.3.tgz",
+    "yaml": "2.9.1"
+  }
+}

@@ -1,0 +1,72 @@
+# Runs only when a version tag (v1.2.3) is pushed. It checks that the committed dist/ matches the sources,
+# runs the tests, then creates a draft GitHub release with dist/tactile.html and its checksum. A maintainer reviews the
+# draft and publishes it by hand. See docs/RELEASING.md.
+name: Release
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Tag is on main
+        run: |
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main \
+            || { echo "::error::$GITHUB_REF_NAME does not point to a commit on main"; exit 1; }
+
+      - name: Build, and check that dist/ was committed up to date
+        run: |
+          node build.mjs
+          git diff --exit-code -- dist/ \
+            || { echo "::error::dist/ does not match the sources. Run node build.mjs and commit dist/."; exit 1; }
+
+      # The editor's tests run tactile-ingest (fill, verify) on what the editor wrote: its packages come first.
+      - name: Ingest package tests
+        run: |
+          npm ci --ignore-scripts
+          npm test
+        working-directory: ingest
+
+      - name: Editor tests
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm test
+
+      - name: Release notes from CHANGELOG.md
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '
+            index($0, "## [" v "]") == 1 { on = 1; next }
+            on && /^## \[/ { exit }
+            on { print }
+          ' CHANGELOG.md > notes.md
+          grep -q '[^[:space:]]' notes.md \
+            || { echo "::error::CHANGELOG.md has no section for $version"; exit 1; }
+
+      - name: Checksum
+        run: cd dist && sha256sum tactile.html > ../SHA256SUMS.txt && cat ../SHA256SUMS.txt
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/tactile.html SHA256SUMS.txt \
+            --draft --verify-tag \
+            --title "Tactile $GITHUB_REF_NAME" \
+            --notes-file notes.md
