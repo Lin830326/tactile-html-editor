@@ -8,7 +8,7 @@ Tactile edits HTML documents that may come from anywhere, including AI output an
 
 **Please do not open a public issue for a security problem.**
 
-Use GitHub's private reporting: the repository's **Security** tab, then **Report a vulnerability** (or [open an advisory directly](../../security/advisories/new)). This is the only channel; the project has no security mailbox. Only the maintainer can read what you send there.
+Use GitHub's private reporting: the repository's **Security** tab, then **Report a vulnerability** (or [open an advisory directly](https://github.com/Lin830326/tactile-html-editor/security/advisories/new)). This is the only channel; the project has no security mailbox. Only the maintainer can read what you send there.
 
 Please include:
 

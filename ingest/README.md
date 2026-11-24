@@ -12,8 +12,11 @@ Node 22.13 or later is required.
 
 The `.npmrc` in this folder sets `omit=optional`: the optional drawing package of `pdfjs-dist` (`@napi-rs/canvas`) is not installed. Reading text does not need it.
 
+The tool runs from a clone of the repository. Every command on this page is run in the `ingest/` folder:
+
 ```bash
-npm ci
+cd ingest
+npm ci --ignore-scripts
 ```
 
 ## Language of the messages
@@ -104,7 +107,7 @@ A Word document has no sheets, so the 2nd part of the ID is written differently:
 | `2026Q3.docx/body/A2` | The 2nd paragraph outside the tables |
 | `2026Q3.docx/body/B2` | The 1st number in the 2nd paragraph (`C2` is the 2nd number) |
 
-Word stores text only. `ingest` reads a text that holds exactly 1 number as a numeric value: thousands separators, decimals, a minus sign, a negative number in parentheses, `%`, a leading currency symbol. Other text stays text, for example `4.82億`. The full rules are in section 3.3 of the [specification](../docs/spec/provenance.md).
+Word stores text only. When a table cell or a whole paragraph (such as `t1/D6` or `body/A2`) holds exactly 1 number and nothing else, `ingest` reads it as a numeric value: thousands separators, decimals, a minus sign, a negative number in parentheses, `%`, a leading currency symbol. Other text stays text, for example `4.82億`; the numbers inside a paragraph of prose get addresses of their own (`body/B2`, `body/C2`). The full rules are in section 3.3 of the [specification](../docs/spec/provenance.md).
 
 Because the numeric values are parsed, both `facts.md` and the output of `verify` write 1 sentence that says so. We recommend a `sum` rule for each total of a Word table: a total in Word is typed by a person, not a formula.
 
@@ -112,7 +115,7 @@ Not ingested: headers, footers, footnotes, text boxes, deleted tracked changes. 
 
 The Word and PDF examples are in Chinese, in `examples/zh-hant/`; their source files are `test/fixtures/2026Q3.docx` and `2026Q3.pdf`. Word example: `examples/zh-hant/word-draft.html`, `examples/zh-hant/word-rules.yaml`, and the `examples/zh-hant/word-report.html` that `fill` produced; the source file is `test/fixtures/2026Q3.docx`.
 
-The text of a chart (the chart name for screen readers, the joining marks in tooltip text) follows the `<html lang>` of the report: `zh-Hans`, `zh-CN` and `zh-SG` use Simplified Chinese and mainland terms (柱状图, 折线图, 饼图); other Chinese, or no language, uses Traditional Chinese; other languages use English. `fill` and `verify` use the same rule, so the charts of an English report can also be drawn again and compared. The full example of an English report is in `examples/traceable/`, and the Simplified Chinese one is in `examples/traceable-zh-hans/`.
+The text of a chart (the chart name for screen readers, the separators in tooltip text) follows the `<html lang>` of the report. **Write `<html lang="en">` in an English report**: a report that names no language gets Traditional Chinese chart text, as before. The rule: `zh-Hans`, `zh-CN` and `zh-SG` use Simplified Chinese and mainland terms (柱状图, 折线图, 饼图); other Chinese, or no language, uses Traditional Chinese; other languages use English. `fill` and `verify` use the same rule, so the charts of an English report can also be drawn again and compared. The full example of an English report is in `examples/traceable/`, and the Simplified Chinese one is in `examples/traceable-zh-hans/`.
 
 ## Usage: PDF
 
@@ -137,7 +140,7 @@ You must know 3 things before you use it:
 
 The rules for parsing numeric values are the same as for Word. When a footnote mark follows a number, that piece is text. The full rules are in section 3.4 of the [specification](../docs/spec/provenance.md).
 
-Both `facts.md` and the output of `verify` write 1 sentence that says so. If the same data exists as `.xlsx` or `.docx`, we recommend that file instead of the PDF: its addresses are stored in the file, not worked out.
+Because the positions and the values of a PDF are worked out, both `facts.md` and the output of `verify` write 1 sentence that says so. If the same data exists as `.xlsx` or `.docx`, we recommend that file instead of the PDF: its addresses are stored in the file, not worked out.
 
 PDF example (in Chinese): `examples/zh-hant/pdf-draft.html`, `examples/zh-hant/pdf-rules.yaml`, and the `examples/zh-hant/pdf-report.html` that `fill` produced; the source file is `test/fixtures/2026Q3.pdf`.
 

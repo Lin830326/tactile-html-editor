@@ -20,10 +20,11 @@ Versions follow [Semantic Versioning](https://semver.org). Before 1.0, a minor v
 git switch main
 git pull
 npm ci
+npx playwright install chromium   # once
 node build.mjs
 git diff --exit-code -- dist/
+(cd ingest && npm ci --ignore-scripts && npm test)   # first: the editor's tests run tactile-ingest
 npm test
-(cd ingest && npm ci --ignore-scripts && npm test)
 node tools/set-repo.mjs --check
 ```
 
@@ -102,5 +103,4 @@ Fix reported vulnerabilities in the private fork that GitHub creates for a secur
 - **The command-line tool.** A release holds `tactile.html` only. `ingest/` is used from a checkout; publishing it as an npm package, with its own version, is not decided.
 - **Version in the file.** The built HTML does not record its version yet. `build.mjs` writes the license notices into a comment at the top of `dist/*.html`. It should write the version there too, and somewhere the editor can show it.
 - **Build provenance.** After the repository is public, add [`actions/attest-build-provenance`](https://github.com/actions/attest-build-provenance) so that users can verify that `tactile.html` was built by this workflow from the tagged commit.
-- **Pinned actions.** Pin `actions/checkout` and `actions/setup-node` to full commit SHAs instead of version tags, in both workflows.
 - **Signed tags** (`git tag -s`).

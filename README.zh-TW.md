@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-**[在瀏覽器直接試用](https://lin830326.github.io/tactile-html-editor/)**：同一個檔案，放在網頁上。
+**[在瀏覽器直接試用](https://lin830326.github.io/tactile-html-editor/)**：同一個檔案，放在網頁上。沒有開啟 AI 助理時，編輯器不會把你開啟的內容送到任何地方。頁面本身引用的網路圖片、字型與樣式，瀏覽器仍會向它們的主機讀取。
 
 像改簡報一樣直接動手改 HTML：點一下選取，雙擊改字，拖曳移動。單一 HTML 檔，不必安裝，離線可用。
 
@@ -29,15 +29,18 @@ Firefox、Safari 與 claude.ai Artifact 版不能寫入磁碟上的檔案。在�
 
 ## 數字可以追溯到來源
 
-AI 把試算表的數字抄進報告時可能抄錯，而且讀者看不出來。用 `tactile-ingest` 時，AI 不寫數字。AI 只寫數字來自哪個儲存格，程式再把數字填進去。
+AI 把試算表的數字抄進報告時可能抄錯，而且讀者看不出來。用 `tactile-ingest` 時，AI 不寫數字。AI 只寫數字來自哪個儲存格，程式再把數字填進去。如果文件裡出現沒有寫儲存格的數字，程式不會擋下它，但會回報：編輯器的「出處」分頁把它列在「無出處的數字」，`fill` 會提出警告。
 
 ![點數字會顯示它來自試算表的哪個儲存格、來源值與公式](docs/img/zh-TW/provenance.png)
 
+`tactile-ingest` 不在單一檔案裡。它從這個 repo 的副本執行，需要 Node 22.13 以上。下面的指令使用 `ingest/examples/traceable/` 的範例：
+
 ```bash
-cd ingest && npm ci --ignore-scripts
-node bin/tactile-ingest.mjs ingest 2026Q3.xlsx --out out
-node bin/tactile-ingest.mjs fill draft.html --facts out/facts.json --rules rules.yaml --out report.html
-node bin/tactile-ingest.mjs verify report.html --source 2026Q3.xlsx --rules rules.yaml
+git clone https://github.com/Lin830326/tactile-html-editor.git
+cd tactile-html-editor/ingest && npm ci --ignore-scripts
+node bin/tactile-ingest.mjs ingest examples/traceable/2026Q3.xlsx --out out
+node bin/tactile-ingest.mjs fill examples/traceable/draft.html --facts out/facts.json --rules examples/traceable/rules.yaml --out out/report.html
+node bin/tactile-ingest.mjs verify out/report.html --source examples/traceable/2026Q3.xlsx --rules examples/traceable/rules.yaml
 ```
 
 - **`ingest`**：把 `.xlsx`、Word 的 `.docx` 或 PDF 讀成每個儲存格 1 筆的值，每筆有位址，例如 `2026Q3.xlsx/損益表/D14`。

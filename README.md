@@ -2,11 +2,11 @@
 
 [繁體中文](README.zh-TW.md)
 
-**You and an AI, working in one HTML file.** Edit a page by hand the way you edit a slide: click to select, double-click to type, drag to move. Ask the built-in assistant for the rest. When a report is built from a spreadsheet, the AI never types a number: it names the cell, and the editor writes the value.
+**You and an AI, working in one HTML file.** Edit a page by hand the way you edit a slide: click to select, double-click to type, drag to move. Ask the built-in assistant for the rest. When a report is built from a spreadsheet, the AI does not type the numbers: it names the cell, and the editor writes the value. A number that names no cell is flagged.
 
 One HTML file, no install, no server. Open source (MIT).
 
-**[Try it in your browser](https://lin830326.github.io/tactile-html-editor/)**: the same file, served as a page. Nothing you open there leaves your computer unless you turn the assistant on.
+**[Try it in your browser](https://lin830326.github.io/tactile-html-editor/)**: the same file, served as a page. The editor sends nothing you open there anywhere unless you turn the assistant on. A page that loads pictures, fonts or styles from the web still fetches them from their hosts, as it does in any browser.
 
 [![Watch the 52-second film: an AI swaps two digits, and how Tactile makes every number traceable](docs/img/film-poster.jpg)](docs/media/tactile-promo.mp4)
 
@@ -17,7 +17,7 @@ One HTML file, no install, no server. Open source (MIT).
 Reports, slide decks and landing pages are now often written by an AI as HTML.
 
 - **Changing one word should not need another prompt.** Open the file the AI wrote, fix what you see, press `Ctrl+S`. The change goes back into the same file.
-- **A number an AI copied can be wrong, and nobody can tell by looking.** Here every number in a report links to the spreadsheet cell it came from. Click it to see the cell, the source value and the formula.
+- **A number an AI copied can be wrong, and nobody can tell by looking.** Here a number in a report links to the spreadsheet cell it came from: click it to see the cell, the source value and the formula. A number with no source is flagged.
 - **You stay in charge.** The assistant can draft a reconciliation rule; only you can approve one. One AI edit is one undo step.
 
 ## Quick start
@@ -57,7 +57,7 @@ The interface is in English, Traditional Chinese and Simplified Chinese. It foll
 
 An AI agent writes `report.html`. You open that file in Tactile, fix what you see, and press `Ctrl+S`. The change goes back into the same file. There is no import, no export and no copy to keep in step.
 
-This needs no API key. The agent can be any tool that writes files: Claude Code, Codex CLI, Gemini CLI or another, on whatever plan you already have. Tactile only reads and writes the file. The built-in assistant is separate and optional: it needs an API key or a local model, and cannot sign in with a subscription.
+This needs no API key. The agent can be any tool that writes files: Claude Code, Codex CLI, Gemini CLI or another, on whatever plan you already have. Tactile only reads and writes the file. The built-in assistant is separate and optional: in `dist/tactile.html` it needs an API key or a local model, and cannot sign in with a subscription. (The claude.ai Artifact build, `dist/artifact.html`, uses the viewer's Claude account instead.)
 
 - **Save back to the original.** In Chrome and Edge, a file you open or drop is linked to the file on disk. `Ctrl+S` writes to it. The file keeps its line endings and its byte-order mark.
 - **Changes from outside are picked up.** When the agent (or another editor) changes the file, Tactile notices within a few seconds. If you have no unsaved changes it loads the new version, and Undo takes you back. If you have, it asks first.
@@ -68,17 +68,18 @@ Firefox, Safari and the claude.ai Artifact build cannot write to a file on disk;
 
 ## Numbers you can trace
 
-An AI that copies a number from a spreadsheet into a report can copy it wrong, and nobody can tell by looking. Here the AI never writes the number. It writes which cell the number comes from, and a program fills it in.
+An AI that copies a number from a spreadsheet into a report can copy it wrong, and nobody can tell by looking. Here the AI does not write the number. It writes which cell the number comes from, and a program fills it in. A number written without a cell is not stopped, but it is reported: the editor lists it as having no source and tells the assistant, and `fill` warns about it.
 
-**In the editor:** drop an `.xlsx` on the window and ask the assistant for a report. It reads the workbook with tools, cites cells, and the editor writes each value in and records its source. A bar, line or pie chart is drawn by the editor from the cells the assistant names, with the code `tactile-ingest` draws it with. Reconciliation rules (a total equals the sum of its parts, two cells are equal) are added in the Sources panel or drafted by the assistant, computed on the source values, and count as confirmed only after you put your name to them: the assistant cannot. A `rules.yaml` you wrote yourself can be dropped on the window. Without the assistant, the Sources panel searches the workbook's cells and inserts a cited number where the cursor is, and a button fills everything in again after you change the file. No install, no command line.
+**In the editor:** drop an `.xlsx` on the window and ask the assistant for a report. It reads the workbook with tools, cites cells, and the editor writes each value in and records its source. A bar, line or pie chart is drawn by the editor from the cells the assistant names, with the same code that `tactile-ingest` uses. Reconciliation rules (a total equals the sum of its parts, two cells are equal) are added in the Sources panel or drafted by the assistant, computed on the source values, and count as confirmed only after you approve them under your name: the assistant cannot. A `rules.yaml` you wrote yourself can be dropped on the window. Without the assistant, the Sources panel searches the workbook's cells and inserts a cited number where the cursor is, and a button fills every citation and chart in again. No install, no command line.
 
-**On the command line**, for Word and PDF sources and for checking a report against the file again, there is `tactile-ingest`:
+**On the command line**, for Word and PDF sources and for checking a report against the file again, there is `tactile-ingest`. It is not in the single file: it runs from a clone of this repository, with Node 22.13 or later. The commands below use the example in `ingest/examples/traceable/`:
 
 ```bash
-cd ingest && npm ci --ignore-scripts
-node bin/tactile-ingest.mjs ingest 2026Q3.xlsx --out out
-node bin/tactile-ingest.mjs fill draft.html --facts out/facts.json --rules rules.yaml --out report.html
-node bin/tactile-ingest.mjs verify report.html --source 2026Q3.xlsx --rules rules.yaml
+git clone https://github.com/Lin830326/tactile-html-editor.git
+cd tactile-html-editor/ingest && npm ci --ignore-scripts
+node bin/tactile-ingest.mjs ingest examples/traceable/2026Q3.xlsx --out out
+node bin/tactile-ingest.mjs fill examples/traceable/draft.html --facts out/facts.json --rules examples/traceable/rules.yaml --out out/report.html
+node bin/tactile-ingest.mjs verify out/report.html --source examples/traceable/2026Q3.xlsx --rules examples/traceable/rules.yaml
 ```
 
 - **`ingest`** reads an `.xlsx`, the tables and paragraphs of a Word `.docx`, or the text of a PDF, into one fact per cell, each with its address, such as `2026Q3.xlsx/Income/D14`.
@@ -100,7 +101,7 @@ More: [ingest/README.md](ingest/README.md), the format in [docs/spec/provenance.
 - **Effects.** Hover, entrance and scroll effects in CSS only, 14 kinds, with a preview. Visitors who ask for reduced motion see a still page.
 - **Slides.** A deck's slides are listed in a panel: add, copy, remove, and drag into order.
 - **Several pages in one file.** Home, News, About: pages that a navigation bar switches between, with CSS only and no script. The panel adds, renames, copies, removes and reorders them, and the links follow.
-- **A floating island.** A group of pill buttons fixed to a corner of the window: a link (a web address, `mailto:`, `tel:` or a page of the document), a small panel that opens over the page (the browser's own `popover`), or back to top. No script. The file has no server: a helper panel shows what you wrote and answers nothing, and a report button can only lead to your own mailbox, form or support page.
+- **A floating island.** A group of pill buttons fixed to a corner of the window: a link (a web address, `mailto:`, `tel:` or a page of the document), a small panel that opens over the page (the browser's own `popover`), or back to top. No script. The file has no server: a help panel shows the text you wrote and cannot answer questions, and a "report a problem" button can only lead to your own mailbox, form or support page.
 - **Smaller and cleaner files.** Crop an embedded picture with a frame you drag; compress the pictures embedded in a document; download a copy without comments, generator marks, scripts or source data, as you choose.
 - **Undo for everything.** Every step, and one AI edit is one step.
 - **Files.** Open, paste or drop HTML; save back; export HTML, PDF (through the print dialog) and PNG; embed a page's relative pictures and style sheets so that it stays one file; per-tab autosave; built-in templates: twelve in English (an investor pitch deck, an annual report whose charts grow as you scroll, a dark analytics dashboard, an aurora product launch page, a financial report whose every figure traces to a spreadsheet cell, a conference page, a design case study, an email newsletter, and plainer ones), eight in Simplified Chinese for the kinds of document common in mainland China (a year-end work report, a sales-event dashboard, a new-product page, a long article for phones, a quotation with VAT, an invitation page, a traceable report) and seven in Traditional Chinese, plus, in each of the three languages, a small site with four pages in one file and a floating island.
@@ -112,9 +113,9 @@ The [Chinese README](README.zh-TW.md) describes each feature at greater length.
 
 Automated tests run in Chromium on every change. The whole suite of 157 tests was also run in Playwright's Firefox and WebKit builds (2026-11-18): Firefox passed 150 and WebKit 150 (one does not apply there). Real Safari was not tested.
 
-**Safari (WebKit) gets a different canvas frame.** WebKit runs no event listener in a frame that is sandboxed without scripts, not even one the page around it attached, so there the editor could not be clicked. Where the editor finds that, it makes the frame with scripts allowed and a content security policy that refuses every script of the document, takes the permission back as soon as the frame has loaded, and loads no nested page (`<iframe>`, `<object>`, `<embed>`) while editing: those show as empty boxes until you preview with scripts allowed. Text inside `<noscript>` does not show while editing. [SECURITY.md](SECURITY.md) says what this rests on. The print frame is made the same way, so the editor hears the print dialog close. The 6 WebKit failures: five tests need a Chromium-only feature, and one expects a nested page to load.
+**Safari (WebKit) gets a different canvas frame.** WebKit runs no event listener in a frame that is sandboxed without scripts, not even one the page around it attached, so there the canvas could not be clicked. When the editor detects this, it makes the frame with scripts allowed and a content security policy that refuses every script of the document, takes the permission back as soon as the frame has loaded, and loads no nested page (`<iframe>`, `<object>`, `<embed>`) while editing: those show as empty boxes until you preview with scripts allowed. Text inside `<noscript>` does not show while editing. [SECURITY.md](SECURITY.md) says what this rests on. The print frame is made the same way, so the editor can tell when the print dialog closes. The 6 WebKit failures: five tests need a Chromium-only feature, and one expects a nested page to load.
 
-The 7 Firefox failures: five tests need a Chromium-only feature, one needs scroll-driven effects, which Firefox does not have, and one is a drawing difference of the test machine (Playwright's Firefox draws at 1.2 times on a display scaled to 120% and rounds the thickness of borders, so boxes are 1 to 2px shorter on the canvas than in a capture).
+The 7 Firefox failures: five tests need a Chromium-only feature, one needs scroll-driven effects, which the Firefox build that was tested does not have yet (the table below gives the version), and one is a drawing difference of the test machine (Playwright's Firefox draws at 1.2 times on a display scaled to 120% and rounds the thickness of borders, so boxes are 1 to 2px shorter on the canvas than in a capture).
 
 | | Chrome, Edge | Firefox | Safari |
 |---|---|---|---|
@@ -132,7 +133,11 @@ In a browser without entrance and scroll effects, the page shows its final state
 
 ## The AI assistant and your data
 
-Tactile has no server and sends no telemetry. Nothing leaves the browser unless you use the AI assistant. When you do, the settings dialog lists what is sent and where:
+Tactile has no server and sends no telemetry. The editor itself sends nothing unless you use the AI assistant.
+
+A page you edit may load pictures, fonts, style sheets or frames from the web. The browser fetches those from their hosts while you edit and preview, as it does when you open the page; [SECURITY.md](SECURITY.md) lists every request.
+
+When you use the assistant, your browser sends the following straight to the service you chose: the Anthropic API, the address of your OpenAI-compatible service, or claude.ai in the Artifact build. Nothing goes through a server of Tactile. The settings dialog shows the same list and names the service:
 
 - what you type, the file name, an outline of the page and a summary of its styling;
 - the HTML of the elements you selected;
@@ -146,7 +151,7 @@ Tactile has no server and sends no telemetry. Nothing leaves the browser unless 
 
 Where your API key is kept depends on how you opened the editor:
 
-- **From disk (`file://`)**: in the tab's memory only. You type it again after a reload. Chrome and Edge give every page opened from disk one shared storage, so a stored key could be read by any HTML file you open.
+- **From disk (`file://`)**: in the tab's memory only, so you type it again after a reload. Tactile does not store the key there, because Chrome and Edge give every page opened from disk one shared storage, where any HTML file you open could read it.
 - **From a web address**: in the browser's localStorage for that address.
 
 The assistant is told that the page is data, not instructions. That lowers the risk that text in a page steers it; it does not remove it. Look at what the assistant changed. Every change can be undone.
@@ -155,7 +160,7 @@ The assistant is told that the page is data, not instructions. That lowers the r
 
 A page you open may contain scripts, and it may come from anyone.
 
-- While you edit, the page's scripts do not run.
+- While you edit, the page's scripts do not run. The one exception is compat mode ("Also run while editing" in the **Scripts** menu), for pages that only show their content once their scripts have run. It gives those scripts the editor's own rights, your stored AI keys included, so it asks first, applies to the current document only and is never stored.
 - In preview they run in an isolated frame that cannot reach the editor, its settings or your keys.
 - Scripts in a file you opened, pasted or dropped run only after you allow it. New script, from a paste or from the AI, stops them until you allow it again.
 - An exported file is an ordinary web page: its scripts run when someone opens it.
@@ -172,7 +177,7 @@ npm test                          # the editor
 cd ingest && npm ci --ignore-scripts && npm test   # the command-line tool
 ```
 
-The editor uses no framework and one built-in library (SheetJS, to read `.xlsx`). `ingest/` is a separate Node package. Start with [CONTRIBUTING.md](CONTRIBUTING.md); the modules and their rules are in [CONTRACT.md](CONTRACT.md), and what is planned is in [docs/ROADMAP.md](docs/ROADMAP.md) (in Chinese).
+The editor uses no framework and one built-in library (SheetJS, to read `.xlsx`). `ingest/` is a separate Node package. Start with [CONTRIBUTING.md](CONTRIBUTING.md); the modules and their rules are in [CONTRACT.md](CONTRACT.md), and what is planned is in [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Contact
 

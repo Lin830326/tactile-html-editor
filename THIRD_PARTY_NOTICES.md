@@ -29,6 +29,7 @@ The editor has no other third-party code, fonts or images. It loads nothing from
 |---|---|---|---|
 | [SheetJS Community Edition](https://sheetjs.com) (`xlsx`) | 0.20.3 | Apache-2.0 | The publisher's package file, unchanged, in `ingest/vendor/xlsx-0.20.3.tgz`. Its license is inside the file (`package/LICENSE`). |
 | [parse5](https://github.com/inikulin/parse5) | 8.0.1 | MIT | Installed by `npm ci`; not in this repository. |
+| [entities](https://github.com/fb55/entities) | 8.1.0 | BSD-2-Clause | Installed by `npm ci` because `parse5` needs it; not in this repository. |
 | [yaml](https://github.com/eemeli/yaml) | 2.9.1 | ISC | Installed by `npm ci`; not in this repository. |
 | [PDF.js](https://github.com/mozilla/pdf.js) (`pdfjs-dist`) | 6.5.438 | Apache-2.0 | Installed by `npm ci`; not in this repository. Its optional package `@napi-rs/canvas` is left out (`ingest/.npmrc`). |
 
