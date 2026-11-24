@@ -57,6 +57,8 @@ The interface is in English, Traditional Chinese and Simplified Chinese. It foll
 
 An AI agent writes `report.html`. You open that file in Tactile, fix what you see, and press `Ctrl+S`. The change goes back into the same file. There is no import, no export and no copy to keep in step.
 
+This needs no API key. The agent can be any tool that writes files: Claude Code, Codex CLI, Gemini CLI or another, on whatever plan you already have. Tactile only reads and writes the file. The built-in assistant is separate and optional: it needs an API key or a local model, and cannot sign in with a subscription.
+
 - **Save back to the original.** In Chrome and Edge, a file you open or drop is linked to the file on disk. `Ctrl+S` writes to it. The file keeps its line endings and its byte-order mark.
 - **Changes from outside are picked up.** When the agent (or another editor) changes the file, Tactile notices within a few seconds. If you have no unsaved changes it loads the new version, and Undo takes you back. If you have, it asks first.
 - **No silent overwrite.** If the file changed on disk while you were editing, saving offers three choices: overwrite, load the version on disk, or save as a new file.
