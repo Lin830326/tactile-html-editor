@@ -6,7 +6,9 @@ Add each change under `Unreleased` in the pull request that makes it. `docs/RELE
 
 ## [Unreleased]
 
-Nothing has been released yet. The first release is planned as 0.1.0 and will contain everything below.
+## [0.1.0] - 2026-11-25
+
+The first release.
 
 ### Added
 
@@ -78,4 +80,5 @@ Nothing has been released yet. The first release is planned as 0.1.0 and will co
 - Opened from disk, the editor shows an OpenAI-compatible service address that is not on this computer and asks before the first request of a tab goes to it, because another page opened from disk could have changed it.
 - The AI settings list what is sent to the service. The assistant is told that page content is data, not instructions, and each message marks the user's request with a random marker that page text cannot know.
 
-[Unreleased]: https://github.com/Lin830326/tactile-html-editor/commits/main
+[Unreleased]: https://github.com/Lin830326/tactile-html-editor/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Lin830326/tactile-html-editor/releases/tag/v0.1.0
