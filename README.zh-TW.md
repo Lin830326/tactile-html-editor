@@ -243,6 +243,14 @@ src/js/tidy.js      壓縮內嵌圖片、清理後匯出
 src/js/app.js       啟動流程
 ```
 
+## 聯絡
+
+Tactile 由 [Lin830326](https://github.com/Lin830326) 製作。
+
+- 回報問題或提出想法：[開一個 issue](https://github.com/Lin830326/tactile-html-editor/issues)。
+- 安全問題：照 [SECURITY.md](SECURITY.md) 回報，不可開 issue。
+- 合作、在你的組織導入 Tactile、客製開發：寫信到 [mulul4774@gmail.com](mailto:mulul4774@gmail.com)。
+
 ## 授權
 
 以 [MIT 授權](LICENSE)釋出。`dist/tactile.html` 和 `dist/artifact.html` 的開頭都附有完整的授權條款，單獨散布這兩個檔案時請保留。

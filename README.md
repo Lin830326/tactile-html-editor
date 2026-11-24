@@ -172,6 +172,14 @@ cd ingest && npm ci --ignore-scripts && npm test   # the command-line tool
 
 The editor uses no framework and one built-in library (SheetJS, to read `.xlsx`). `ingest/` is a separate Node package. Start with [CONTRIBUTING.md](CONTRIBUTING.md); the modules and their rules are in [CONTRACT.md](CONTRACT.md), and what is planned is in [docs/ROADMAP.md](docs/ROADMAP.md) (in Chinese).
 
+## Contact
+
+Tactile is made by [Lin830326](https://github.com/Lin830326).
+
+- A bug or an idea: [open an issue](https://github.com/Lin830326/tactile-html-editor/issues).
+- A security problem: see [SECURITY.md](SECURITY.md). Do not open an issue for it.
+- Working together, setting Tactile up in your organisation, or custom work: write to [mulul4774@gmail.com](mailto:mulul4774@gmail.com).
+
 ## License
 
 [MIT](LICENSE). Both built files carry the full license text at the top; keep it when you pass them on.
