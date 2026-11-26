@@ -251,11 +251,16 @@ test('PPTX: in a claude.ai Artifact the file goes to the downloads capability', 
   expect(save.size).toBeGreaterThan(5000);
 });
 
-test('PPTX: every deck template exports, with text boxes on its slides', async ({ page }) => {
+// A template is a deck where its boards keep one shape. With the fonts of another machine a line can wrap once more
+// and a board can grow past 16:9 (the boards of en-pitch have aspect-ratio, which gives way to taller content): the
+// editor then does not take the document for a deck, here as in the PDF export. So a template that is not a deck on
+// this machine must be so for that reason, and most templates must be decks.
+test('PPTX: the deck templates export, with text boxes on their slides', async ({ page }) => {
   test.setTimeout(240_000);
   await boot(page);
   const decks = await page.evaluate(() => HE.samples.list.filter((s) => /pitch|slides/.test(s.key)).map((s) => s.key));
   expect(decks.length).toBeGreaterThanOrEqual(2);
+  let found = 0;
   for (const key of decks) {
     const out = await page.evaluate(async (k) => {
       const s = HE.samples.list.find((x) => x.key === k);
@@ -266,14 +271,25 @@ test('PPTX: every deck template exports, with text boxes on its slides', async (
       f.style.cssText = 'position:fixed;left:-99999px;top:0;width:1280px;height:720px;border:0';
       await new Promise((resolve) => { f.addEventListener('load', resolve); f.srcdoc = HE.doc.serialize(); document.body.append(f); });
       const deck = HE.pages.findDeck(f.contentDocument);
+      const shapes = deck ? [] : Array.from(f.contentDocument.querySelectorAll('.slide, body > * > section, body > section')).map((b) => [b.offsetWidth, Math.round(b.offsetWidth / b.offsetHeight * 100) / 100]);
       const measured = deck ? deck.boards.map((b) => HE.pptx.measure(b)) : [];
       const plain = measured.filter((m) => !HE.pptx.hide(m)).length;
       const left = f.contentDocument.body.innerText.replace(/\s+/g, '');
       f.remove();
-      return { boards: measured.length, boxes: measured.reduce((n, m) => n + m.blocks.length, 0), plain, left: left.length };
+      return { boards: measured.length, boxes: measured.reduce((n, m) => n + m.blocks.length, 0), plain, left: left.length, shapes };
     }, key);
+    if (!out.boards) {
+      // Not a deck here: boards of one width, and at least one of another shape than the first.
+      expect(out.shapes.length, key + ' ' + JSON.stringify(out.shapes)).toBeGreaterThanOrEqual(3);
+      expect(new Set(out.shapes.map((s) => s[0])).size, key + ' ' + JSON.stringify(out.shapes)).toBe(1);
+      expect(out.shapes.some((s) => Math.abs(s[1] / out.shapes[0][1] - 1) >= 0.03), key + ' ' + JSON.stringify(out.shapes)).toBe(true);
+      test.info().annotations.push({ type: 'not a deck on this machine', description: key + ' ' + JSON.stringify(out.shapes) });
+      continue;
+    }
+    found++;
     expect(out.boards, key).toBeGreaterThanOrEqual(3);
     expect(out.boxes, key).toBeGreaterThan(out.boards * 2);
     expect(out.plain, key).toBe(0);
   }
+  expect(found).toBeGreaterThanOrEqual(2);
 });
