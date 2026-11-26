@@ -6,6 +6,14 @@ Add each change under `Unreleased` in the pull request that makes it. `docs/RELE
 
 ## [Unreleased]
 
+### Added
+
+- **Export a deck as a PowerPoint file (PPTX).** "Export PPTX deck" in the export menu. Each slide is a picture of the board with its text taken out, and the text on top as text boxes at the same place, size, colour and weight, so the slide looks like the page and its text can be changed and moved in PowerPoint. Charts, shapes, backgrounds and the text inside an SVG stay in the picture. The sources of the numbers are not in the PPTX. Only a deck is exported; another document says why and downloads nothing. The file is written by the editor itself, with no library for PowerPoint files: the single file grew by about 35 KB. Opened in PowerPoint on Windows; Keynote, Google Slides and LibreOffice were not tested.
+
+### Fixed
+
+- **Export PNG, and the pictures the assistant sees:** a rule of the page for `svg` elements (for example `svg { position: absolute }`) also moved or resized the whole picture, because the page is drawn inside an SVG. The picture is no longer reached by the page's rules.
+
 ## [0.1.0] - 2026-11-25
 
 The first release.

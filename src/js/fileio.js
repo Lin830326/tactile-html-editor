@@ -23,6 +23,9 @@
   const PRINT_W = 1280;
   const PRINT_H = 720;
   const PRINT_KEEP_MS = 10 * 60 * 1000;
+  const PPTX_MIME = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+  // A slide's picture past this size as a PNG is written as a JPEG, when that is smaller.
+  const PPTX_PNG_MAX = 400 * 1024;
   const PRINT_CSS = '@media print{*,*::before,*::after{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}';
   const COPY_LOAD_MS = 15000;
   // The picture is as wide as the canvas's page: no scrollbar takes room in the copy.
@@ -1619,6 +1622,91 @@
     return HE.pages ? HE.pages.findDeck(doc) : null;
   }
 
+  /**
+   * A deck as a PowerPoint file. Each board of a clean copy becomes one slide: a picture of the board without its
+   * text, and the text on top as text boxes (HE.pptx). The copy is laid out at the 16:9 screen the print copy uses,
+   * so the slides do not depend on the device the canvas shows. A document that is not a deck is not exported.
+   */
+  async function exportPPTX() {
+    if (!HE.doc.model) { toast(HE.t('目前沒有可匯出的文件')); return false; }
+    if (state.exporting) return false;
+    commitEdits();
+    if (!HE.pptx || !HE.pptx.ready() || !HE.snap || !(await HE.snap.probe())) {
+      toast(HE.t('這個瀏覽器無法把頁面畫成圖片，所以無法匯出 PPTX。請改用「匯出 PDF」'), { type: 'error' });
+      return false;
+    }
+    if (state.exporting) return false;
+    state.exporting = true;
+    HE.ui.status(HE.t('正在產生 PPTX…'));
+    const working = toast(HE.t('正在產生 PPTX 簡報…'), { sticky: true });
+    let frame = null;
+    try {
+      const html = HE.util.intoHead(HE.doc.serialize(), '<style>' + NO_PAGE_SCROLLBARS + '</style>');
+      frame = await copyFrame(html, { w: PRINT_W, h: PRINT_H, sandbox: 'allow-same-origin' });
+      const doc = frame.contentDocument;
+      const win = doc.defaultView;
+      const deck = findDeck(doc);
+      if (!deck) {
+        HE.ui.status('');
+        toast(HE.t('這份文件不是簡報：找不到大小相同的投影片。請改用「匯出 PDF」或「匯出 PNG 圖片」'), { timeout: 9000 });
+        return false;
+      }
+      // Every board is measured before any text is hidden: hiding must not change what is measured.
+      const measured = deck.boards.map((board) => HE.pptx.measure(board));
+      const plain = measured.filter((m) => !HE.pptx.hide(m)).length;
+      const slides = [];
+      let gray = false;
+      for (let i = 0; i < measured.length; i++) {
+        HE.ui.status(HE.t('正在產生 PPTX…（{n} / {total}）', { n: i + 1, total: measured.length }));
+        const b = measured[i].board.getBoundingClientRect();
+        const shot = await HE.snap.area(doc, { x: b.left + win.scrollX, y: b.top + win.scrollY, w: b.width, h: b.height }, { pixelRatio: 2 });
+        if (shot.missing.length || shot.skipped) gray = true;
+        // A PNG is exact, and small for flat colours. A photo or a gradient is many times smaller as a JPEG.
+        let blob = await shot.blob('image/png');
+        let ext = 'png';
+        if (blob.size > PPTX_PNG_MAX) {
+          const jpeg = await shot.blob('image/jpeg', 0.92);
+          if (jpeg.size < blob.size) { blob = jpeg; ext = 'jpeg'; }
+        }
+        slides.push({ bytes: new Uint8Array(await blob.arrayBuffer()), ext, blocks: measured[i].blocks });
+      }
+      const bytes = HE.pptx.build(slides, { w: measured[0].w, h: measured[0].h, lang: doc.documentElement.getAttribute('lang') || '' });
+      const file = new Blob([bytes], { type: PPTX_MIME });
+      const filename = exportName('pptx');
+      if (HE.env.inArtifact) {
+        const dl = await getDownloads();
+        if (!dl || typeof dl.save !== 'function') { toast(HE.t('這裡無法下載檔案'), { type: 'error' }); return false; }
+        try {
+          await dl.save({ filename, data: file });
+        } catch (err) {
+          const code = err && err.code;
+          if (code === 'declined') { HE.ui.status(''); return false; }
+          if (code === 'rate_limited') { toast(HE.t('請稍後再試')); return false; }
+          console.warn('[HE] fileio: downloads.save rejected', err);
+          toast(HE.t('無法下載 PPTX 簡報'), { type: 'error' });
+          return false;
+        }
+      } else {
+        triggerDownload(file, filename);
+      }
+      HE.ui.status(HE.t('已匯出 {name}（{n} 張投影片）', { name: filename, n: slides.length }));
+      toast(HE.t('已匯出 {name}，檔案在瀏覽器的下載資料夾', { name: filename }), { type: 'success', timeout: 5000 });
+      toast(HE.t('投影片的文字可以在 PowerPoint 修改。圖表、圖形與背景是圖片；數字的出處沒有帶進 PPTX。'), { timeout: 10000 });
+      if (plain) toast(HE.t('有 {n} 張投影片的文字無法分開，整張保留為圖片。', { n: plain }), { timeout: 8000 });
+      if (gray) toast(HE.t('有外部圖片或嵌入內容無法畫進圖片，已用灰色框代替。'), { timeout: 8000 });
+      return true;
+    } catch (err) {
+      console.error('[HE] fileio: PPTX export failed', err);
+      HE.ui.status('');
+      toast(HE.t('無法產生 PPTX 簡報'), { type: 'error' });
+      return false;
+    } finally {
+      working.close();
+      if (frame) frame.remove();
+      state.exporting = false;
+    }
+  }
+
   function removePrintFrame() {
     const old = document.getElementById(PRINT_FRAME_ID);
     if (old) old.remove();
@@ -2991,6 +3079,7 @@
     // The Artifact's frame may not open the print dialog; its downloads capability takes a PNG.
     if (!HE.env.inArtifact) items.push({ label: HE.t('匯出 PDF…'), icon: 'file', onClick: () => exportPDF() });
     items.push({ label: HE.t('匯出 PNG 圖片'), icon: 'image', onClick: () => exportPNG() });
+    if (HE.pptx) items.push({ label: HE.t('匯出 PPTX 簡報'), icon: 'file', onClick: () => exportPPTX() });
     if (!HE.env.inArtifact) items.push({ separator: true }, { label: HE.t('在新分頁預覽'), icon: 'eye', onClick: previewInTab });
     return items;
   }
@@ -3121,6 +3210,7 @@
     exportHTML,
     exportPDF,
     exportPNG,
+    exportPPTX,
     copyHTML,
     downloadText,
     insertImages,

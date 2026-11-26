@@ -7,11 +7,12 @@
  * areas are stitched from viewport-high slices. Effects and animations show at rest, and fixed elements
  * where they sit with the page scrolled to the top, as in a full-page screenshot.
  *
- *   HE.snap = {probe(), capture({ids, maxEdge, quality}), page(doc, {pixelRatio}), regionFor(ids)}
+ *   HE.snap = {probe(), capture({ids, maxEdge, quality}), page(doc, {pixelRatio}), area(doc, rect, {pixelRatio}), regionFor(ids)}
  *   capture -> {dataUrl, base64, mediaType, width, height, scale, rect: {x, y, w, h} (page CSS px),
  *               viewport: {w, h}, cut (the area continues below), missing: [what became gray boxes],
  *               blob()}
  *   page    -> the same, for the whole of any same-origin document that is laid out, as a PNG (the export).
+ *   area    -> {width, height, scale, missing, skipped, blob(type, quality)} for one rect of such a document.
  */
 (function () {
   'use strict';
@@ -27,6 +28,11 @@
   const MAX_PIXELS = 48e6;
   const FREEZE_CSS = '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}';
   const SVG_NS = 'http://www.w3.org/2000/svg';
+  // The page's style sheets are inside the drawing, so a rule of the page for svg (svg { position: absolute }) would
+  // also reach the <svg> the page is drawn in, and move or resize the whole picture.
+  const ROOT_STYLE = ['position:static', 'inset:auto', 'margin:0', 'padding:0', 'border:0', 'float:none', 'transform:none', 'translate:none',
+    'rotate:none', 'scale:none', 'max-width:none', 'max-height:none', 'min-width:0', 'min-height:0', 'opacity:1', 'filter:none',
+    'visibility:visible', 'box-sizing:content-box'].map((d) => d + '!important').join(';');
   const STAND_IN = 'data-he-snap';
   const EMBEDS = 'iframe, video, canvas, object, embed';
   // XML would reject attribute names like Vue's @click or :class, and with them the whole picture.
@@ -364,7 +370,7 @@
     g.fillStyle = isClear(bg.backgroundColor) ? '#ffffff' : bg.backgroundColor;
     g.fillRect(0, 0, canvas.width, canvas.height);
     for (let top = r.y; top < r.y + r.h; top += vh) {
-      const svg = '<svg xmlns="' + SVG_NS + '" width="' + sw + '" height="' + vh + '"><foreignObject x="0" y="' + (-top) +
+      const svg = '<svg xmlns="' + SVG_NS + '" width="' + sw + '" height="' + vh + '" style="' + ROOT_STYLE + '"><foreignObject x="0" y="' + (-top) +
         '" width="' + vw + '" height="' + fullH + '">' + xhtml + '</foreignObject></svg>';
       const img = await loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg));
       g.drawImage(img, Math.round(-r.x * scale), Math.round((top - r.y) * scale), Math.round(sw * scale), Math.round(vh * scale));
@@ -462,6 +468,26 @@
     return result(await render(doc, rect, run), rect, false, run);
   }
 
+  /**
+   * A picture of one area of `doc` (`rect`: {x, y, w, h} in page CSS px), for an export that cuts a page into parts
+   * (the slides of a deck). The result is not encoded yet: blob(type, quality) writes it as a PNG or a JPEG.
+   */
+  async function area(doc, rect, opts = {}) {
+    const de = doc && doc.documentElement;
+    if (!de || !doc.body || !de.clientWidth || !de.clientHeight) throw new Error('No page is showing.');
+    const r = { x: Math.round(rect.x), y: Math.round(rect.y), w: Math.max(1, Math.round(rect.w)), h: Math.max(1, Math.round(rect.h)) };
+    const run = { depth: 0, bytes: 0, chars: textChars(doc), type: 'image/png', scale: pageScale(r.w, r.h, de.clientHeight, opts.pixelRatio || 2) };
+    const out = await render(doc, r, run);
+    return {
+      width: out.canvas.width,
+      height: out.canvas.height,
+      scale: out.scale,
+      missing: Array.from(new Set(out.missing)),
+      skipped: out.skipped,
+      blob: (type, quality) => new Promise((resolve, reject) => out.canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('No image.'))), type || 'image/png', quality)),
+    };
+  }
+
   let probed = null;
   /** Whether this browser lets the page read back an HTML drawing (false where it taints the canvas). */
   function probe() {
@@ -487,5 +513,5 @@
     return probed;
   }
 
-  HE.snap = { probe, capture, page, regionFor };
+  HE.snap = { probe, capture, page, area, regionFor };
 })();

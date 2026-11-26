@@ -51,6 +51,7 @@ Tactile answers each with one part:
 ### The editor
 
 - Slides panel: no thumbnails, and one slide is selected at a time.
+- Export PPTX: only decks. Charts and shapes are part of the slide's picture and cannot be changed in PowerPoint. The sources of the numbers are not carried over. No export to Word (DOCX) yet.
 - Compressing pictures skips CSS background pictures. Unused CSS rules are not removed.
 - The AI assistant sees a picture only when it is selected.
 - Several pages in one file: a document recognises one set of pages. A link to an element inside a page that is not on show does not reveal it.
@@ -69,6 +70,7 @@ Tactile answers each with one part:
 - **Real models.** The assistant citing spreadsheet cells was run with a real model once, with one request and one workbook. Pie and line charts, `equal` rules and cropping pictures have not been run with a real model. `evals/injection.mjs` has not been run with a real model either, so how often a model obeys instructions it meets in a page is not known.
 - **The English and Simplified Chinese texts** have not been read by native readers. The Simplified Chinese templates have not been reviewed by someone who knows the advertising rules of mainland China.
 - **The email newsletter template** has not been tested in Outlook or Gmail.
+- **Exported PPTX files** were opened in PowerPoint on Windows only, with the fonts of the page installed. Keynote, Google Slides, LibreOffice and PowerPoint on a Mac have not been tested.
 - **Names in the templates.** The company names are made up, and have not been checked against real ones.
 - **Whether company users will approve reconciliation rules** once for each kind of report. There is no evidence from real users yet.
 - **Other converters** (for example `markitdown`, `docling`): whether they keep cell addresses and page numbers has not been checked.
